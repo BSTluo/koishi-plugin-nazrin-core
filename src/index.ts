@@ -54,9 +54,9 @@ export function apply(ctx: Context) {
           if (!index) { overDataList = []; return _.session.send('输入超时。') }
           const goal: search_data = overDataList[Number(index) - 1]
           ctx.emit('nazrin/parse', goal.platform, goal.url)
-          ctx.once('nazrin/parse_over', url => {
-            if (type === 'music') { return _.session.send(`<audio url="${url}"/>`) }
-            return _.session.send(`<video url="${url}"/>`)
+          ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
+            if (type === 'music') { return _.session.send(`<audio url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
+            return _.session.send(`<video url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`)
           })
         } else {
           return
@@ -88,7 +88,7 @@ export function apply(ctx: Context) {
 export interface search_data {
   name?: string
   author?: string
-  avatar?: string
+  cover?: string
   url?: string
   platform?: string
   err?: boolean
@@ -103,9 +103,8 @@ declare module '@satorijs/core' {
     'nazrin/movie'(keyword: string): void
     'nazrin/search_over'(data: search_data[]): void
     'nazrin/parse'(platform: string, url: string): void
-    'nazrin/parse_over'(url: string): void
+    'nazrin/parse_over'(url: string, name?: string, author?: string, cover?: string, duration?: number, bitRate?: number, color?: string): void
   }
 
   interface Events extends NazrinEvents { }
 }
-
