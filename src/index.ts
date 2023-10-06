@@ -1,4 +1,14 @@
 import { Context, Logger, Schema } from 'koishi'
+import { } from 'koishi-plugin-puppeteer'
+import { nazrin } from './service'
+
+declare module 'koishi' {
+  interface Context {
+      nazrin: nazrin
+  }
+}
+
+export * from './service'
 
 export const name = 'nazrin-core'
 
@@ -6,29 +16,12 @@ export interface Config { }
 
 export const Config: Schema<Config> = Schema.object({})
 
-declare module 'koishi' {
-  interface Context {
-    nazrin: nazrin
-  }
-}
+export const using = ['nazrin']
 
-export interface nazrin {
-  music: string[]
-  video: string[]
-  short_video: string[]
-  acg: string[]
-  movie: string[]
-}
+const logger = new Logger('IIROSE-BOT')
 
 export function apply(ctx: Context) {
-  if (!('nazrin' in ctx)) { Context.service('nazrin') }
-  ctx.nazrin = {
-    music: [],
-    video: [],
-    short_video: [],
-    acg: [],
-    movie: []
-  }
+  ctx.plugin(nazrin)
 
   ctx.command('nazrin')
     .option('music', '<keyword:string> 歌曲名称')
@@ -42,20 +35,38 @@ export function apply(ctx: Context) {
       let whichPlatform = ctx.nazrin[type]
       let overDataList = []
 
-      ctx.on('nazrin/search_over', data => {
+      ctx.on('nazrin/search_over', async data => {
         const platformIndex = whichPlatform.indexOf(data[0].platform)
-        if (platformIndex < 0) { return 'error' }
+        if (platformIndex < 0) { return logger.warn(` [${data[0].platform}] 平台未注册`) }
         whichPlatform.splice(platformIndex, 1)
 
-        if (data[0].err) { return }
+        if (data[0].err) { return logger.warn(` [${data[0].platform}] 平台无结果`) }
 
         overDataList.concat(data)
 
         if (whichPlatform.length <= 0) {
-          _.session.send('okkk')
+          // 返回结果
+          const page = await ctx.puppeteer.page()
+          await page.setContent('<h1>111222</h1>')
+          const png = await page.screenshot({
+            encoding: 'base64',
+            fullPage: true
+          })
           whichPlatform = ctx.nazrin[type]
+
+          _.session.send(`<image url="data:image/png;base64,${png}"/>`)
+          _.session.send('请输入序号来选择具体的点播目标')
+          const index = await _.session.prompt()
+          if (!index) { overDataList = []; return _.session.send('输入超时。') }
+          const goal: search_data = overDataList[Number(index) - 1]
+          ctx.emit('nazrin/parse', goal.platform, goal.url)
+          ctx.once('nazrin/parse_over', url => {
+            if (type === 'music') { return _.session.send(`<audio url="${url}"/>`) }
+            return _.session.send(`<video url="${url}"/>`)
+          })
+        } else {
+          return
         }
-        return
       })
 
       switch (type) {
@@ -80,17 +91,16 @@ export function apply(ctx: Context) {
     })
 }
 
+export interface search_data {
+  name?: string
+  author?: string
+  avatar?: string
+  url?: string
+  platform?: string
+  err?: boolean
+}
 
 declare module '@satorijs/core' {
-  interface search_data {
-    name?: string
-    author?: string
-    avatar?: string
-    url?: string
-    platform?: string,
-    err?: boolean
-  }
-
   interface NazrinEvents {
     'nazrin/music'(keyword: string): void
     'nazrin/video'(keyword: string): void
@@ -98,6 +108,8 @@ declare module '@satorijs/core' {
     'nazrin/acg'(keyword: string): void
     'nazrin/movie'(keyword: string): void
     'nazrin/search_over'(data: search_data[]): void
+    'nazrin/parse'(platform: string, url: string): void
+    'nazrin/parse_over'(url: string): void
   }
 
   interface Events extends NazrinEvents { }
