@@ -2,12 +2,6 @@ import { Context, Logger, Schema } from 'koishi'
 import { } from 'koishi-plugin-puppeteer'
 import { nazrin } from './service'
 
-declare module 'koishi' {
-  interface Context {
-      nazrin: nazrin
-  }
-}
-
 export * from './service'
 
 export const name = 'nazrin-core'

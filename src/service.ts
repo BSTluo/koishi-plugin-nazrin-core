@@ -1,5 +1,11 @@
 import { Context, Service } from "koishi"
 
+declare module 'koishi' {
+    interface Context {
+        nazrin: nazrin
+    }
+}
+
 export class nazrin extends Service {
     music: string[] = []
     video: string[] = []
