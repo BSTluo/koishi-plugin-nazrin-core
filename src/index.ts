@@ -1,6 +1,7 @@
 import { Context, Logger, Schema } from 'koishi'
 import { } from 'koishi-plugin-puppeteer'
 import { nazrin } from './service'
+import { pageMake } from './pageHtmlMake'
 
 export * from './service'
 
@@ -41,10 +42,11 @@ export function apply(ctx: Context) {
         if (whichPlatform.length <= 0) {
           // 返回结果
           const page = await ctx.puppeteer.page()
-          await page.setContent('<h1>111222</h1>')
-          const png = await page.screenshot({
-            encoding: 'base64',
-            fullPage: true
+
+          await page.setContent(pageMake(overDataList))
+          let test = await page.$('.box')
+          const png = await test.screenshot({
+            encoding: 'base64'
           })
           whichPlatform = ctx.nazrin[type]
 
