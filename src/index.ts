@@ -11,8 +11,6 @@ export interface Config { }
 
 export const Config: Schema<Config> = Schema.object({})
 
-// export const using = ['nazrin']
-
 const logger = new Logger('Nazrin')
 
 export function apply(ctx: Context) {
