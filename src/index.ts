@@ -120,3 +120,4 @@ declare module '@satorijs/core' {
 
   interface Events extends NazrinEvents { }
 }
+// 增加字数限制
