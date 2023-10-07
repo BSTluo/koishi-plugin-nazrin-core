@@ -11,9 +11,9 @@ export interface Config { }
 
 export const Config: Schema<Config> = Schema.object({})
 
-export const using = ['nazrin']
+// export const using = ['nazrin']
 
-const logger = new Logger('IIROSE-BOT')
+const logger = new Logger('Nazrin')
 
 export function apply(ctx: Context) {
   ctx.plugin(nazrin)
@@ -120,4 +120,5 @@ declare module '@satorijs/core' {
 
   interface Events extends NazrinEvents { }
 }
+
 // 增加字数限制
