@@ -58,8 +58,8 @@ export function apply(ctx: Context) {
 
           ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url)
           ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
-            if (searchType === 'music') { return _.session.send(`<audio url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
-            return _.session.send(`<video url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`)
+            if (searchType === 'music') { return _.session.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
+            return _.session.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`)
           })
         } else {
           return
