@@ -11,8 +11,8 @@ export const pageMake = (list) => {
 
   const items = list.map((item, index) => `
       <div class="content">${index + 1}</div>
-      <div class="content">${item.name}</div>
-      <div class="content">${item.author}</div>
+      <div class="content">${(item.name.length <= 10) ? item.name : item.name.substr(0,10) + "..." }</div>
+      <div class="content">${(item.author.length <= 10) ? item.author : item.author.substr(0,10) + "..."}</div>
       <div class="content">${item.platform}</div>
   `).join('');
 

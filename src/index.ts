@@ -16,7 +16,7 @@ const logger = new Logger('Nazrin')
 export function apply(ctx: Context) {
   ctx.plugin(nazrin)
 
-  ctx.command('nazrin')
+  ctx.command('nazrin', '聚合搜索核心！！')
     .option('music', '<keyword:string> 歌曲名称')
     .option('video', '<keyword:string> 长视频名称')
     .option('short_video', '<keyword:string> 短视频关键词')
