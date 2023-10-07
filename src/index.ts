@@ -35,7 +35,7 @@ export function apply(ctx: Context) {
 
         if (data[0].err) { return logger.warn(` [${data[0].platform}] 平台无结果`) }
 
-        overDataList.concat(data)
+        overDataList = overDataList.concat(data)
 
         if (whichPlatform.length <= 0) {
           // 返回结果
