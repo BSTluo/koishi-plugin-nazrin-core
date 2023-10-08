@@ -46,7 +46,6 @@ export function apply(ctx: Context) {
           const png = await test.screenshot({
             encoding: 'base64'
           })
-          whichPlatform = ctx.nazrin[type]
 
           _.session.send(`<image url="data:image/png;base64,${png}"/>`)
           _.session.send('请输入序号来选择具体的点播目标')
