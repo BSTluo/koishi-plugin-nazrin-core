@@ -25,15 +25,15 @@ export function apply(ctx: Context) {
     .action((_) => {
       const type: any = Object.keys(_.options)[0]
 
-      let whichPlatform = ctx.nazrin[type]
+      let whichPlatform = ctx.nazrin[type].slice()
       let overDataList = []
 
-      ctx.on('nazrin/search_over', async data => {
+      const over = ctx.on('nazrin/search_over', async data => {
         const platformIndex = whichPlatform.indexOf(data[0].platform)
-        if (platformIndex < 0) { return logger.warn(` [${data[0].platform}] 平台未注册`) }
+        if (platformIndex < 0) { logger.warn(` [${data[0].platform}] 平台未注册`); return over() }
         whichPlatform.splice(platformIndex, 1)
 
-        if (data[0].err) { return logger.warn(` [${data[0].platform}] 平台无结果`) }
+        if (data[0].err) { logger.warn(` [${data[0].platform}] 平台无结果`); return over() }
 
         overDataList = overDataList.concat(data)
 
@@ -50,15 +50,16 @@ export function apply(ctx: Context) {
           _.session.send(`<image url="data:image/png;base64,${png}"/>`)
           _.session.send('请输入序号来选择具体的点播目标')
           const index = await _.session.prompt()
-          if (!index) { overDataList = []; return _.session.send('输入超时。') }
+          if (!index) { overDataList = []; _.session.send('输入超时。'); return over() }
           const goal: search_data = overDataList[Number(index) - 1]
 
           const searchType: "music" | "video" | "short_video" | "acg" | "movie" = type
 
           ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url)
           ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
+            over()
             if (searchType === 'music') { return _.session.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
-            return _.session.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`)
+            return _.session.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) 
           })
         } else {
           return
