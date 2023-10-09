@@ -18,5 +18,9 @@
   "peerDependencies": {
     "koishi": "^4.15.0",
     "koishi-plugin-puppeteer": "^3.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BSTluo/koishi-plugin-nazrin-core.git"
   }
 }
