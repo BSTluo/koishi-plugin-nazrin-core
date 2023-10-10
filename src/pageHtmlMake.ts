@@ -1,4 +1,4 @@
-export const pageMake = (list) => {
+export const pageMake = (list: any[]) => {
   const header = `
       <div class="box">
           <div class="title">Nazrin-search</div>
@@ -9,7 +9,7 @@ export const pageMake = (list) => {
               <div class="category">平台</div>
   `;
 
-  const items = list.map((item, index) => `
+  const items = list.map((item: { name: string; author: string; platform: any; }, index: number) => `
       <div class="content">${index + 1}</div>
       <div class="content">${(item.name.length <= 15) ? item.name : item.name.substr(0,10) + "..." }</div>
       <div class="content">${(item.author.length <= 15) ? item.author : item.author.substr(0,10) + "..."}</div>

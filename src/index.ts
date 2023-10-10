@@ -24,10 +24,9 @@ export function apply(ctx: Context) {
     .option('movie', '<keyword:string> 电影关键词')
     .action((_) => {
       const type: any = Object.keys(_.options)[0]
-
       let whichPlatform = ctx.nazrin[type].slice()
-      let overDataList = []
-
+      let overDataList: any[] = []
+      _.session?.send('搜索中...')
       const over = ctx.on('nazrin/search_over', async data => {
         const platformIndex = whichPlatform.indexOf(data[0].platform)
         if (platformIndex < 0) { logger.warn(` [${data[0].platform}] 平台未注册`); return over() }
@@ -43,14 +42,14 @@ export function apply(ctx: Context) {
 
           await page.setContent(pageMake(overDataList))
           let test = await page.$('.box')
-          const png = await test.screenshot({
+          const png = await test?.screenshot({
             encoding: 'base64'
-          })
-
-          _.session.send(`<image url="data:image/png;base64,${png}"/>`)
-          _.session.send('请输入序号来选择具体的点播目标')
-          const index = await _.session.prompt()
-          if (!index) { overDataList = []; _.session.send('输入超时。'); return over() }
+          }) || null
+          
+          await _.session?.send(`<image url="data:image/png;base64,${png}"/>`)
+          _.session?.send('请输入序号来选择具体的点播目标')
+          const index = await _.session?.prompt()
+          if (!index) { overDataList = []; _.session?.send('输入超时。'); return over() }
           const goal: search_data = overDataList[Number(index) - 1]
 
           const searchType: "music" | "video" | "short_video" | "acg" | "movie" = type
@@ -58,14 +57,13 @@ export function apply(ctx: Context) {
           ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url)
           ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
             over()
-            if (searchType === 'music') { return _.session.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
-            return _.session.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) 
+            if (searchType === 'music') { return _.session?.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
+            return _.session?.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) 
           })
         } else {
           return
         }
       })
-
       switch (type) {
         case 'music':
           ctx.emit('nazrin/music', _.options.music)
