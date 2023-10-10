@@ -55,6 +55,11 @@ export function apply(ctx: Context) {
           const searchType: "music" | "video" | "short_video" | "acg" | "movie" = type
 
           ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url)
+          if (goal.hasOwnProperty('data')) {
+            ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url, goal.data)
+          } else {
+            ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url)
+          }
           ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
             over()
             if (searchType === 'music') { return _.session?.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`) }
@@ -93,6 +98,7 @@ export interface search_data {
   url?: string
   platform?: string
   err?: boolean
+  data?: any
 }
 
 declare module '@satorijs/core' {
@@ -105,11 +111,11 @@ declare module '@satorijs/core' {
 
     'nazrin/search_over'(data: search_data[]): void
 
-    'nazrin/parse_music'(platform: string, url: string): void
-    'nazrin/parse_video'(platform: string, url: string): void
-    'nazrin/parse_short_video'(platform: string, url: string): void
-    'nazrin/parse_acg'(platform: string, url: string): void
-    'nazrin/parse_movie'(platform: string, url: string): void
+    'nazrin/parse_music'(platform: string, url: string, data?:any): void
+    'nazrin/parse_video'(platform: string, url: string, data?:any): void
+    'nazrin/parse_short_video'(platform: string, url: string, data?:any): void
+    'nazrin/parse_acg'(platform: string, url: string, data?:any): void
+    'nazrin/parse_movie'(platform: string, url: string, data?:any): void
 
     'nazrin/parse_over'(url: string, name?: string, author?: string, cover?: string, duration?: number, bitRate?: number, color?: string): void
   }
