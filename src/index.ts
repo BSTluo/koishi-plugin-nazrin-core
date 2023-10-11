@@ -54,7 +54,6 @@ export function apply(ctx: Context) {
 
           const searchType: "music" | "video" | "short_video" | "acg" | "movie" = type
 
-          ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url)
           if (goal.hasOwnProperty('data')) {
             ctx.emit(`nazrin/parse_${searchType}`, goal.platform, goal.url, goal.data)
           } else {
