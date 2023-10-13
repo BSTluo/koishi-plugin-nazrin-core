@@ -49,8 +49,10 @@ export function apply(ctx: Context) {
           await _.session?.send(`<image url="data:image/png;base64,${png}"/>`)
           _.session?.send('请输入序号来选择具体的点播目标')
           const index = await _.session?.prompt()
+          console.log(!/[^[0-9]+$]/.test(index))
           if (!index) { overDataList = []; _.session?.send('输入超时。'); return over() }
-          if (Number(index) <= 0 || Number(index) > overDataList.length || !/[^[0-9]+$]/.test(index)) { overDataList = []; _.session?.send('输入的文本不正确'); return over() }
+
+          if (Number(index) <= 0 || Number(index) > overDataList.length || !/^[0-9]+$/.test(index)) { overDataList = []; _.session?.send('输入的文本不正确'); return over() }
 
           const goal: search_data = overDataList[Number(index) - 1]
 
