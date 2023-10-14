@@ -45,7 +45,7 @@ export function apply(ctx: Context) {
           const png = await test?.screenshot({
             encoding: 'base64'
           }) || null
-
+          await page.close()
           await _.session?.send(`<image url="data:image/png;base64,${png}"/>`)
           _.session?.send('请输入序号来选择具体的点播目标')
           const index = await _.session?.prompt()
