@@ -4,7 +4,6 @@
 
 媒体聚合搜索核心！！
 
-
 # 快速入门
 
 附属插件必须包含：
@@ -37,7 +36,7 @@ export function apply(ctx: Context) {
 
   // 根据关键词返回搜索结果
   // 如果收到音乐搜索请求
-  ctx.on('nazrin/music', keyword => {
+  ctx.on('nazrin/music', (ctx, keyword) => {
   // keyword为关键词
 
     // findList为搜索结果，当当前平台未搜索到结果需要如下格式：
@@ -53,16 +52,16 @@ export function apply(ctx: Context) {
       {
         name: '作品名字',
         author: '作品名字',
-        cover: '封面图片直链',
         url: '资源所在网页地址',
         platform: thisPlatform, // 当前平台
-        err: false, // 是否错误
+        err: false, // 是否错误,
+	data: {} // 任意数据
       }
     ]
     ctx.emit('nazrin/search_over', findList) // 完成后调用此条，提交搜索结果给用户
   })
 
-  ctx.on('nazrin/parse_music', (platform, url)=>{
+  ctx.on('nazrin/parse_music', (ctx, platform, url, data?)=>{
     if (platform !== thisPlatform) { return } // 判断是否为本平台的解析请求
     // .... 解析此链接
   
