@@ -13,8 +13,7 @@ export const Config: Schema<Config> = Schema.object({});
 
 const logger = new Logger('Nazrin');
 
-export function apply(ctx: Context)
-{
+export function apply(ctx: Context) {
   ctx.plugin(nazrin);
 
   ctx.command('nazrin', '聚合搜索核心！！')
@@ -23,10 +22,8 @@ export function apply(ctx: Context)
     .option('short_video', '<keyword:string> 短视频关键词')
     .option('acg', '<keyword:string> 番剧关键词')
     .option('movie', '<keyword:string> 电影关键词')
-    .action(async (_) =>
-    {
-      if (!await ctx.puppeteer)
-      {
+    .action(async (_) => {
+      if (!await ctx.puppeteer) {
         _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
         return;
       }
@@ -34,8 +31,7 @@ export function apply(ctx: Context)
       let whichPlatform = ctx.nazrin[type].slice();
       let overDataList: any[] = [];
       _.session?.send('搜索中...');
-      const over = ctx.on('nazrin/search_over', async data =>
-      {
+      const over = ctx.on('nazrin/search_over', async data => {
         const platformIndex = whichPlatform.indexOf(data[0].platform);
         if (platformIndex < 0) { logger.warn(` [${data[0].platform}] 平台未注册`); return over(); }
         whichPlatform.splice(platformIndex, 1);
@@ -44,8 +40,7 @@ export function apply(ctx: Context)
 
         overDataList = overDataList.concat(data);
 
-        if (whichPlatform.length <= 0)
-        {
+        if (whichPlatform.length <= 0) {
           // 返回结果
           const page = await ctx.puppeteer.page();
 
@@ -58,7 +53,6 @@ export function apply(ctx: Context)
           await _.session?.send(`<image url="data:image/png;base64,${png}"/>`);
           _.session?.send('请输入序号来选择具体的点播目标');
           const index = await _.session?.prompt();
-          console.log(!/[^[0-9]+$]/.test(index));
           if (!index) { overDataList = []; _.session?.send('输入超时。'); return over(); }
 
           if (Number(index) <= 0 || Number(index) > overDataList.length || !/^[0-9]+$/.test(index)) { overDataList = []; _.session?.send('输入的文本不正确'); return over(); }
@@ -67,31 +61,24 @@ export function apply(ctx: Context)
 
           const searchType: "music" | "video" | "short_video" | "acg" | "movie" = type;
 
-          if (goal.hasOwnProperty('data'))
-          {
+          if (goal.hasOwnProperty('data')) {
             ctx.emit(`nazrin/parse_${searchType}`, ctx, goal.platform, goal.url, goal.data);
-          } else
-          {
+          } else {
             ctx.emit(`nazrin/parse_${searchType}`, ctx, goal.platform, goal.url);
           }
-          ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") =>
-          {
+          ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
             over();
-            if (searchType === 'music')
-            {
+            if (searchType === 'music') {
               return _.session?.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`);
-            } else
-            {
+            } else {
               return _.session?.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`);
             }
           });
-        } else
-        {
+        } else {
           return;
         }
       });
-      switch (type)
-      {
+      switch (type) {
         case 'music':
           ctx.emit('nazrin/music', ctx, _.options.music);
           break;
@@ -113,8 +100,7 @@ export function apply(ctx: Context)
     });
 }
 
-export interface search_data
-{
+export interface search_data {
   name?: string;
   author?: string;
   cover?: string;
@@ -125,8 +111,7 @@ export interface search_data
 }
 
 declare module '@satorijs/core' {
-  interface NazrinEvents
-  {
+  interface NazrinEvents {
     'nazrin/music'(ctx: Context, keyword: string): void;
     'nazrin/video'(ctx: Context, keyword: string): void;
     'nazrin/short_video'(ctx: Context, keyword: string): void;
