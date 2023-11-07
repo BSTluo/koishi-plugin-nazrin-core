@@ -110,26 +110,24 @@ export interface search_data {
   data?: any;
 }
 
-declare module '@satorijs/core' {
-  interface NazrinEvents {
-    'nazrin/music'(ctx: Context, keyword: string): void;
-    'nazrin/video'(ctx: Context, keyword: string): void;
-    'nazrin/short_video'(ctx: Context, keyword: string): void;
-    'nazrin/acg'(ctx: Context, keyword: string): void;
-    'nazrin/movie'(ctx: Context, keyword: string): void;
+declare module 'koishi' {
+  interface Events {
+    'nazrin/music'(ctx: Context, keyword: string): Promise<void>;
+    'nazrin/video'(ctx: Context, keyword: string): Promise<void>;
+    'nazrin/short_video'(ctx: Context, keyword: string): Promise<void>;
+    'nazrin/acg'(ctx: Context, keyword: string): Promise<void>;
+    'nazrin/movie'(ctx: Context, keyword: string): Promise<void>;
 
     'nazrin/search_over'(data: search_data[]): void;
 
-    'nazrin/parse_music'(ctx: Context, platform: string, url: string, data?: any): void;
-    'nazrin/parse_video'(ctx: Context, platform: string, url: string, data?: any): void;
-    'nazrin/parse_short_video'(ctx: Context, platform: string, url: string, data?: any): void;
-    'nazrin/parse_acg'(ctx: Context, platform: string, url: string, data?: any): void;
-    'nazrin/parse_movie'(ctx: Context, platform: string, url: string, data?: any): void;
+    'nazrin/parse_music'(ctx: Context, platform: string, url: string, data?: any): Promise<void>;
+    'nazrin/parse_video'(ctx: Context, platform: string, url: string, data?: any): Promise<void>;
+    'nazrin/parse_short_video'(ctx: Context, platform: string, url: string, data?: any): Promise<void>;
+    'nazrin/parse_acg'(ctx: Context, platform: string, url: string, data?: any): Promise<void>;
+    'nazrin/parse_movie'(ctx: Context, platform: string, url: string, data?: any): Promise<void>;
 
     'nazrin/parse_over'(url: string, name?: string, author?: string, cover?: string, duration?: number, bitRate?: number, color?: string): void;
   }
-
-  interface Events extends NazrinEvents { }
 }
 
 // 增加字数限制
