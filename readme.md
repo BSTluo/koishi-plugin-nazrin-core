@@ -79,22 +79,22 @@ export function apply(ctx: Context) {
 
 /*
 搜索请求：
-ctx.on('nazrin/music', async keyword=>{}) // 如果接受到音乐搜索请求
-ctx.on('nazrin/video', async keyword=>{}) // 如果接收到长视频搜索请求
-ctx.on('nazrin/short_video', async keyword=>{}) // 如果接收到短视频搜索请求
-ctx.on('nazrin/acg', async keyword=>{}) // 如果接收到番剧搜索请求
-ctx.on('nazrin/movie', async keyword=>{}) // 如果接收到movie搜索请求
+ctx.on('nazrin/music', async (ctx:Context, keyword:string)=>{}) // 如果接受到音乐搜索请求
+ctx.on('nazrin/video', async (ctx:Context, keyword:string)=>{}) // 如果接收到长视频搜索请求
+ctx.on('nazrin/short_video', async (ctx:Context, keyword:string)=>{}) // 如果接收到短视频搜索请求
+ctx.on('nazrin/acg', async (ctx:Context, keyword:string)=>{}) // 如果接收到番剧搜索请求
+ctx.on('nazrin/movie', async (ctx:Context, keyword:string)=>{}) // 如果接收到movie搜索请求
 
 // 接收到请求搜索请求后，会触发keyword回调函数，keyword为关键词
 
 
 
 解析请求：
-ctx.on('nazrin/parse_music', async (platform, url)=>{})
-ctx.on('nazrin/parse_video', async (platform, url)=>{})
-ctx.on('nazrin/parse_short_video', async (platform, url)=>{})
-ctx.on('nazrin/parse_acg', async (platform, url)=>{})
-ctx.on('nazrin/parse_movie', async (platform, url)=>{})
+ctx.on('nazrin/parse_music', async (ctx:Context, platform: string, url: string, data: any) =>{})
+ctx.on('nazrin/parse_video', async (ctx:Context, platform: string, url: string, data: any) =>{})
+ctx.on('nazrin/parse_short_video', async (ctx:Context, platform: string, url: string, data: any) =>{})
+ctx.on('nazrin/parse_acg', async (ctx:Context, platform: string, url: string, data: any) =>{})
+ctx.on('nazrin/parse_movie', async (ctx:Context, platform: string, url: string, data: any) =>{})
 
 // platform是平台名称，url是需要解析的页面地址
 */
