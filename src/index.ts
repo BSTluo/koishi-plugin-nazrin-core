@@ -13,7 +13,7 @@ export interface Config {
 export const inject = ['puppeteer'];
 
 export const Config: Schema<Config> = Schema.object({
-  textOutput: Schema.boolean().description('是文本输出').default(false)
+  textOutput: Schema.boolean().description('文本输出').default(false)
 });
 
 const logger = new Logger('Nazrin');
