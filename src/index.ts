@@ -2,29 +2,32 @@ import { Context, Logger, Schema } from 'koishi';
 import { } from 'koishi-plugin-puppeteer';
 import { nazrin } from './service';
 import { pageMake } from './pageHtmlMake';
-
 export * from './service';
 
 export const name = 'nazrin-core';
 
-export interface Config { }
+export interface Config {
+  textOutput: boolean;
+}
 
 export const inject = ['puppeteer'];
 
-export const Config: Schema<Config> = Schema.object({});
+export const Config: Schema<Config> = Schema.object({
+  textOutput: Schema.boolean().description('是文本输出').default(false)
+});
 
 const logger = new Logger('Nazrin');
 
-export function apply(ctx: Context) {
+export function apply(ctx: Context, config: Config) {
   ctx.plugin(nazrin);
 
   ctx.inject(['nazrin'], (ctx: Context) => {
     ctx.command('nazrin', '聚合搜索核心！！')
-      .option('music', '<keyword:string> 歌曲名称')
-      .option('video', '<keyword:string> 长视频名称')
-      .option('short_video', '<keyword:string> 短视频关键词')
-      .option('acg', '<keyword:string> 番剧关键词')
-      .option('movie', '<keyword:string> 电影关键词')
+      .option('music', '-m <keyword:text> 歌曲名称')
+      .option('video', '-v <keyword:text> 长视频名称')
+      .option('short_video', '-sv <keyword:text> 短视频关键词')
+      .option('acg', '-a <keyword:text> 番剧关键词')
+      .option('film', '-f <keyword:text> 电影关键词')
       .action(async (_) => {
         if (!await ctx.puppeteer) {
           _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
@@ -32,7 +35,7 @@ export function apply(ctx: Context) {
         }
         const type: any = Object.keys(_.options)[0];
         let whichPlatform = ctx.nazrin[type].slice();
-        let overDataList: any[] = [];
+        let overDataList: search_data[] = [];
         _.session?.send('搜索中...');
         const over = ctx.on('nazrin/search_over', async data => {
           const platformIndex = whichPlatform.indexOf(data[0].platform);
@@ -46,14 +49,21 @@ export function apply(ctx: Context) {
           if (whichPlatform.length <= 0) {
             // 返回结果
             const page = await ctx.puppeteer.page();
-
-            await page.setContent(pageMake(overDataList));
-            let test = await page.$('.box');
-            const png = await test?.screenshot({
-              encoding: 'base64'
-            }) || null;
-            await page.close();
-            await _.session?.send(`<image url="data:image/png;base64,${png}"/>`);
+            if (config.textOutput) {
+              let resultText = '';
+              overDataList.forEach((item: search_data, index) => {
+                resultText = resultText + `${index + 1}. ${item.platform} —— ${item.author}\n${item.name}` + '\n';
+              });
+              await _.session.send(resultText);
+            } else {
+              await page.setContent(pageMake(overDataList));
+              let test = await page.$('.box');
+              const png = await test?.screenshot({
+                encoding: 'base64'
+              }) || null;
+              await page.close();
+              await _.session?.send(`<image url="data:image/png;base64,${png}"/>`);
+            }
             _.session?.send('请输入序号来选择具体的点播目标');
             const index = await _.session?.prompt();
             if (!index) { overDataList = []; _.session?.send('输入超时。'); return over(); }
@@ -95,7 +105,7 @@ export function apply(ctx: Context) {
             ctx.emit('nazrin/acg', ctx, _.options.acg);
             break;
           case 'movie':
-            ctx.emit('nazrin/movie', ctx, _.options.movie);
+            ctx.emit('nazrin/movie', ctx, _.options.film);
             break;
           default:
             return '暂无此类型的聚合搜索方式';
