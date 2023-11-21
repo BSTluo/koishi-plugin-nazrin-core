@@ -45,6 +45,10 @@ export function apply(ctx: Context, config: Config) {
           if (data[0].err) { logger.warn(` [${data[0].platform}] 平台无结果`); return over(); }
 
           overDataList = overDataList.concat(data);
+          for (let item of overDataList) {
+            if (item.name === null || item.name === undefined) { return ` [${data[0].platform}] 平台搜索结果含有null`; }
+            if (item.author === null || item.author === undefined) { return ` [${data[0].platform}] 平台搜索结果含有null`; }
+          }
 
           if (whichPlatform.length <= 0) {
             // 返回结果
