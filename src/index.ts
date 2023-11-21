@@ -10,6 +10,12 @@ export interface Config {
   textOutput: boolean;
 }
 
+export const usage = `
+## 你好！感谢使用此插件！
+此插件因为qq平台限制，可能无法在qq平台显示长视频
+如果在qq平台使用，请开启插件的\`以直链格式输出\`的选项，或前往[线上社区——蔷薇花园](https://iirose.com/#s=5b0fe8a3b1ff2&r=63ec36193da5d)获得最佳观看体验
+`;
+
 export const inject = ['puppeteer'];
 
 export const Config: Schema<Config> = Schema.object({
@@ -28,6 +34,7 @@ export function apply(ctx: Context, config: Config) {
       .option('short_video', '-sv <keyword:text> 短视频关键词')
       .option('acg', '-a <keyword:text> 番剧关键词')
       .option('film', '-f <keyword:text> 电影关键词')
+      .option('list', '-l 搜索合集')
       .action(async (_) => {
         if (!await ctx.puppeteer) {
           _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
