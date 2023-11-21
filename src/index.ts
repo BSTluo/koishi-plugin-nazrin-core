@@ -13,7 +13,8 @@ export interface Config {
 export const usage = `
 ## 你好！感谢使用此插件！
 此插件因为qq平台限制，可能无法在qq平台显示长视频
-如果在qq平台使用，请开启插件的\`以直链格式输出\`的选项，或前往[线上社区——蔷薇花园](https://iirose.com/#s=5b0fe8a3b1ff2&r=63ec36193da5d)获得最佳观看体验
+如果在qq平台使用，请开启插件的\`以直链格式输出\`的选项，或点击这个获得最佳观看体验：
+[线上社区——蔷薇花园](https://iirose.com/#s=5b0fe8a3b1ff2&r=63ec36193da5d)
 `;
 
 export const inject = ['puppeteer'];
