@@ -17,9 +17,6 @@ export const usage = `
 
 或点击<button><a href="https://iirose.com/#s=5b0fe8a3b1ff2&r=63ec36193da5d" style="color:black;">蔷薇花园https://iirose.com/</a></button>获得最佳观看体验
 
-也可以在这里及时体验
-<iframe src="https://iirose.com" style="width:100%;height:30vh;">
-
 在此平台内可以使用@+音视频直链点播视频/音频
 `;
 
