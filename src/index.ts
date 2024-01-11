@@ -1,4 +1,4 @@
-import { Context, Logger, Schema } from 'koishi';
+import { Context, Logger, Schema, h } from 'koishi';
 import { } from 'koishi-plugin-puppeteer';
 import { nazrin } from './service';
 import { pageMake } from './pageHtmlMake';
@@ -78,7 +78,7 @@ export function apply(ctx: Context, config: Config) {
                 encoding: 'base64'
               }) || null;
               await page.close();
-              await _.session?.send(`<image url="data:image/png;base64,${png}"/>`);
+              await _.session?.send(`<img src="data:image/png;base64,${png}"/>`);
             }
             _.session?.send('请输入序号来选择具体的点播目标');
             const index = await _.session?.prompt();
