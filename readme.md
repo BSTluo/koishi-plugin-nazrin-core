@@ -103,11 +103,11 @@ export const name = 'example'
 export function apply(ctx: Context) {
 
   const thisPlatform = 'bilibili'// 定义当前扩展的平台名称，比如bilibili
-  ctx.nazrin.video.push(thisPlatform) // 将此平台添加到video视频源列表
-  ctx.nazrin.short_video.push(thisPlatform) // 将此平台添加到short_video短视频源列表
-  ctx.nazrin.acg.push(thisPlatform) // 将此平台添加到acg番剧源列表
-  ctx.nazrin.movie.push(thisPlatform) // 将此平台添加到movie电影源列表
-  ctx.nazrin.music.push(thisPlatform) // 将此平台添加到music音乐源列表
+  ctx.nazrin.video.push(thisPlatform) // 将此插件添加到video视频源列表
+  ctx.nazrin.short_video.push(thisPlatform) // 将此插件添加到short_video短视频源列表
+  ctx.nazrin.acg.push(thisPlatform) // 将此插件添加到acg番剧源列表
+  ctx.nazrin.movie.push(thisPlatform) // 将此插件添加到movie电影源列表
+  ctx.nazrin.music.push(thisPlatform) // 将此插件添加到music音乐源列表
 
   // 根据关键词返回搜索结果
   // 如果收到音乐搜索请求
