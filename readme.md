@@ -132,7 +132,7 @@ export function apply(ctx: Context) {
         url: '资源所在网页地址',
         platform: thisPlatform, // 当前平台
         err: false, // 是否错误,
-	data: {} // 任意数据
+	      data: any // 任意数据
       }
     ]
     ctx.emit('nazrin/search_over', findList) // 完成后调用此条，提交搜索结果给用户
