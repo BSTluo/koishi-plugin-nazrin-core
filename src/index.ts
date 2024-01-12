@@ -41,7 +41,8 @@ export function apply(ctx: Context, config: Config) {
       .option('list', '-l 搜索合集')
       .usage(usage)
       .action(async (_) => {
-        if (!await ctx.puppeteer) {
+        if (!await ctx.puppeteer)
+        {
           _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
           return;
         }
@@ -57,21 +58,27 @@ export function apply(ctx: Context, config: Config) {
           if (data[0].err) { logger.warn(` [${data[0].platform}] 平台无结果`); return over(); }
 
           overDataList = overDataList.concat(data);
-          for (let item of overDataList) {
+          for (let item of overDataList)
+          {
             if (item.name === null || item.name === undefined) { return ` [${data[0].platform}] 平台搜索结果含有null`; }
             if (item.author === null || item.author === undefined) { return ` [${data[0].platform}] 平台搜索结果含有null`; }
           }
 
-          if (whichPlatform.length <= 0) {
+          if (whichPlatform.length <= 0)
+          {
             // 返回结果
-            const page = await ctx.puppeteer.page();
-            if (config.textOutput) {
+            if (config.textOutput)
+            {
+              // 文字显示
               let resultText = '';
               overDataList.forEach((item: search_data, index) => {
                 resultText = resultText + `${index + 1}. ${item.platform} —— ${item.author}\n${item.name}` + '\n';
               });
               await _.session.send(resultText);
-            } else {
+            } else
+            {
+              // 图片列表显示
+              const page = await ctx.puppeteer.page();
               await page.setContent(pageMake(overDataList));
               let test = await page.$('.box');
               const png = await test?.screenshot({
@@ -83,31 +90,37 @@ export function apply(ctx: Context, config: Config) {
             _.session?.send('请输入序号来选择具体的点播目标');
             const index = await _.session?.prompt();
             if (!index) { overDataList = []; _.session?.send('输入超时。'); return over(); }
-
+            _.session?.send('好哦！正在搜索对应的资源！可能会有点慢...');
             if (Number(index) <= 0 || Number(index) > overDataList.length || !/^[0-9]+$/.test(index)) { overDataList = []; _.session?.send('输入的文本不正确'); return over(); }
 
             const goal: search_data = overDataList[Number(index) - 1];
 
             const searchType: "music" | "video" | "short_video" | "acg" | "movie" = type;
 
-            if (goal.hasOwnProperty('data')) {
+            if (goal.hasOwnProperty('data'))
+            {
               ctx.emit(`nazrin/parse_${searchType}`, ctx, goal.platform, goal.url, goal.data);
-            } else {
+            } else
+            {
               ctx.emit(`nazrin/parse_${searchType}`, ctx, goal.platform, goal.url);
             }
             ctx.once('nazrin/parse_over', (url, name: string = "未知作品名", author: string = "未知作者", cover: string = "未知封面图片直链", duration: number = 300, bitRate: number = 360, color: string = "66ccff") => {
               over();
-              if (searchType === 'music') {
+              if (searchType === 'music')
+              {
                 return _.session?.send(`<audio name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`);
-              } else {
+              } else
+              {
                 return _.session?.send(`<video name="${name}" url="${url}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`);
               }
             });
-          } else {
+          } else
+          {
             return;
           }
         });
-        switch (type) {
+        switch (type)
+        {
           case 'music':
             ctx.emit('nazrin/music', ctx, _.options.music);
             break;
