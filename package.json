@@ -15,8 +15,8 @@
     "plugin"
   ],
   "peerDependencies": {
-    "koishi": "^4.16.3",
-    "koishi-plugin-puppeteer": "^3.5.0"
+    "koishi": "^4.16.4",
+    "koishi-plugin-puppeteer": "^3.7.3"
   },
   "repository": {
     "type": "git",
