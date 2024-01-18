@@ -4,6 +4,7 @@ import { nazrin } from '../service';
 import { pageMake } from '../pageHtmlMake';
 import { search_data, SearchType } from './interface';
 import { Config, usage } from '../config';
+import { Search } from '../search';
 
 export const name = 'nazrin-core';
 
@@ -103,6 +104,18 @@ export function apply(ctx: Context, config: Config)
       .usage(usage)
       .action(async (_) =>
       {
+
+        if (!await ctx.puppeteer)
+        {
+          _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
+          return;
+        }
+        const search = new Search(ctx, _);
+        const type = search.search();
+
+        let whichPlatform = ctx.nazrin[type].slice();
+        let overDataList: search_data[] = [];
+
         const over = ctx.on('nazrin/search_over', async data =>
         {
           const platformIndex = whichPlatform.indexOf(data[0].platform);
@@ -120,8 +133,6 @@ export function apply(ctx: Context, config: Config)
 
           if (whichPlatform.length <= 0)
           {
-            // 返回结果
-
             const index = await selectList(overDataList, _.session);
             if (index == -1) { return over(); }
 
@@ -171,52 +182,8 @@ export function apply(ctx: Context, config: Config)
             return;
           }
         });
-        if (!await ctx.puppeteer)
-        {
-          _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
-          return;
-        }
-        const keys = Object.keys(_.options);
-        let type: SearchType | undefined;
-        if (keys[0] in SearchType)
-        {
-          type = keys[0] as SearchType;
-        } else
-        {
-          _.session?.send('你未输入正确的nazrin指令参数！');
-          return;
-        }
         
-        let whichPlatform = ctx.nazrin[type].slice();
-        let overDataList: search_data[] = [];
-        _.session?.send('搜索中...');
-        switch (type)
-        {
-          case 'music':
-            ctx.emit('nazrin/music', ctx, _.options.music);
-            break;
-          case 'video':
-            ctx.emit('nazrin/video', ctx, _.options.video);
-            break;
-          case 'short_video':
-            ctx.emit('nazrin/short_video', ctx, _.options.short_video);
-            break;
-          case 'acg':
-            ctx.emit('nazrin/acg', ctx, _.options.acg);
-            break;
-          case 'movie':
-            ctx.emit('nazrin/movie', ctx, _.options.film);
-            break;
-          case 'picture':
-            ctx.emit('nazrin/picture', ctx, _.options.picture);
-            break;
-          case 'comics':
-            ctx.emit('nazrin/comics', ctx, _.options.comics);
-            break;
-
-          default:
-            return '暂无此类型的聚合搜索方式';
-        }
+        
       });
   });
 }
