@@ -100,11 +100,10 @@ export function apply(ctx: Context, config: Config)
       .option('film', '-f <keyword:text> 电影关键词')
       .option('picture', '-p <keyword:text> 图片关键词')
       .option('comics', '-c <keyword:text> 漫画关键词')
-      .option('list', '-l 搜索合集')
+      .option('episode', '-e <episode:string> 搜索合集')
       .usage(usage)
       .action(async (_) =>
       {
-
         if (!await ctx.puppeteer)
         {
           _.session.send('检测到你的机器没有安装chrome，如果你安装chrome了但是还是出现这个提示，请前往puppeteer插件然后手动指定安装路径');
