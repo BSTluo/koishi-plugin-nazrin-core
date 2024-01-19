@@ -77,78 +77,96 @@ export class Search
    * @param overDataList 
    * @returns 
    */
+  private async displayList(startIndex: number, overDataList: search_data[]): Promise<search_data[]>
+  {
+    const itemsPerPage: number = 10;
+    const nowList = overDataList.slice(startIndex, startIndex + itemsPerPage);
+
+    if (this.config.textOutput)
+    {
+      // 文字显示
+      const resultText = nowList.map((item: search_data, i) =>
+        `${startIndex + i + 1}. ${item.platform} —— ${item.author}\n${item.name}\n`
+      ).join('');
+
+      await this.session.send(resultText);
+    } else
+    {
+      const makeImage = new MakeImage(this.ctx);
+      const img = await makeImage.makeImage(nowList);
+      await this.session.send(img);
+    }
+
+    return nowList;
+  }
+
+  private async displayPageInfo(startIndex: number, overDataList: search_data[]): Promise<void>
+  {
+    const itemsPerPage: number = 10;
+    const currentPage = Math.floor(startIndex / itemsPerPage) + 1;
+    const totalPages = Math.ceil(overDataList.length / itemsPerPage);
+
+    this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br> <p>或输入"下一页"与"上一页"进行翻页</p> <br> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
+  }
+
+  private async handleUserInput(index: string, startIndex: number, overDataList: search_data[], nowList: search_data[]): Promise<number>
+  {
+    if (!index)
+    {
+      overDataList = [];
+      this.session?.send('输入超时。');
+      return -1;
+    }
+
+    if (index === "下一页" && startIndex + nowList.length >= overDataList.length)
+    {
+      this.session.send('无下一页了！');
+      return -1;
+    } else if (index === "上一页" && startIndex - nowList.length < 0)
+    {
+      this.session.send('无上一页了！');
+      return -1;
+    }
+
+    // 只有在有下一页的情况下才进行数字和范围检查
+    if (index !== "下一页" && index !== "上一页" && (!/^[0-9]+$/.test(index) || Number(index) <= 0 || Number(index) > nowList.length))
+    {
+      overDataList = [];
+      this.session?.send('输入的文本不正确');
+      return -1;
+    } else
+    {
+      // 在这里执行 startIndex 的更新
+      startIndex = (index === "上一页") ? startIndex - nowList.length : (index === "下一页") ? startIndex + nowList.length : startIndex;
+    }
+
+    return startIndex;
+  }
+
   private async selectList(overDataList: search_data[]): Promise<number>
   {
-    let index = '';
+    let index: string;
     let startIndex: number = 0;
-    const itemsPerPage: number = 10;
 
     while (startIndex < overDataList.length)
     {
-      const nowList = overDataList.slice(startIndex, startIndex + itemsPerPage);
-
-      if (this.config.textOutput)
-      {
-        // 文字显示
-        const resultText = nowList.map((item: search_data, i) =>
-          `${startIndex + i + 1}. ${item.platform} —— ${item.author}\n${item.name}\n`
-        ).join('');
-
-        await this.session.send(resultText);
-      } else
-      {
-        const makeImage = new MakeImage(this.ctx);
-        const img = await makeImage.makeImage(nowList);
-        await this.session.send(img);
-      }
-
-      // 显示当前页和总页数
-      const currentPage = Math.floor(startIndex / itemsPerPage) + 1;
-      const totalPages = Math.ceil(overDataList.length / itemsPerPage);
-
-      this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br> <p>或输入"下一页"与"上一页"进行翻页</p> <br> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
+      const nowList = await this.displayList(startIndex, overDataList);
+      await this.displayPageInfo(startIndex, overDataList);
 
       index = await this.session?.prompt();
       index = index?.trim(); // 在这里进行 trim
 
-      if (!index)
-      {
-        overDataList = [];
-        this.session?.send('输入超时。');
-        return -1;
-      }
+      startIndex = await this.handleUserInput(index, startIndex, overDataList, nowList);
 
-      if (index === "下一页" && startIndex + itemsPerPage >= overDataList.length)
+      if (/^[0-9]+$/.test(index))
       {
-        this.session.send('无下一页了！');
-        return -1;
-      } else if (index === "上一页" && startIndex - itemsPerPage < 0)
-      {
-        this.session.send('无上一页了！');
-        return -1;
-      }
-
-      // 只有在有下一页的情况下才进行数字和范围检查
-      if (index !== "下一页" && index !== "上一页" && (!/^[0-9]+$/.test(index) || Number(index) <= 0 || Number(index) > nowList.length))
-      {
-        overDataList = [];
-        this.session?.send('输入的文本不正确');
-        return -1;
-      } else
-      {
-
-        // 在这里执行 startIndex 的更新
-        startIndex = (index === "上一页") ? startIndex - itemsPerPage : (index === "下一页") ? startIndex + itemsPerPage : startIndex;
-      }
-
-      if (/^[0-9]+$/.test(index)) {
         break;
       }
-
     }
 
     return Number(index) + startIndex;
   }
+
 
 
 
