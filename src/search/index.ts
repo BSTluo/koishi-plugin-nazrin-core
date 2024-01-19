@@ -6,7 +6,7 @@ import { MakeImage } from "../MakeImage";
 export class Search
 {
   private ctx: Context;
-  private _: Argv<never, never, string[], Extend<Extend<Extend<Extend<Extend<Extend<Extend<Extend<{}, "music", string>, "video", string>, "short_video", string>, "acg", string>, "film", string>, "picture", string>, "comics", string>, "episode", string>>;
+  private _: Argv<never, never, string[], Extend<Extend<Extend<Extend<Extend<Extend<Extend<Extend<object, "music", string>, "video", string>, "short_video", string>, "acg", string>, "film", string>, "picture", string>, "comics", string>, "episode", string>>;
   private session: Session<never, never, Context>;
   private config: Config;
   logger = new Logger('Nazrin');
@@ -156,7 +156,7 @@ export class Search
   private searchOver(type: SearchType)
   {
     this._.session?.send('搜索中...');
-    let whichPlatform = this.ctx.nazrin[type].slice();
+    const whichPlatform = this.ctx.nazrin[type].slice();
     let overDataList: search_data[] = [];
     const over = this.ctx.on('nazrin/search_over', async (data) =>
     {
@@ -178,7 +178,7 @@ export class Search
 
       overDataList = overDataList.concat(data);
 
-      for (let item of overDataList)
+      for (const item of overDataList)
       {
         if (item.name === null || item.name === undefined || item.author === null || item.author === undefined)
         {
@@ -209,7 +209,7 @@ export class Search
       {
         over();
 
-        let urlList = Array.isArray(url) ? url : [url];
+        const urlList = Array.isArray(url) ? url : [url];
 
         urlList.forEach(v =>
         {

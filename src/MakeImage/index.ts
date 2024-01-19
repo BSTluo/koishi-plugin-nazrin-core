@@ -25,7 +25,7 @@ export class MakeImage
      * @param list 
      * @returns 
      */
-    private pageMake(list: any[])
+    private pageMake(list: search_data[])
     {
         const header = `
             <div class="box">
@@ -37,7 +37,7 @@ export class MakeImage
                     <div class="category">平台</div>
         `;
 
-        const items = list.map((item: { name: string; author: string; platform: any; }, index: number) => `
+        const items = list.map((item, index: number) => `
             <div class="content">${index + 1}</div>
             <div class="content">${(item.name.length <= 15) ? item.name : item.name.substr(0, 10) + "..."}</div>
             <div class="content">${(item.author.length <= 15) ? item.author : item.author.substr(0, 10) + "..."}</div>

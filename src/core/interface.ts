@@ -6,7 +6,7 @@ export interface search_data
   url?: string;
   platform?: string;
   err?: boolean;
-  data?: any;
+  data?;
 }
 
 export const SearchType = {
