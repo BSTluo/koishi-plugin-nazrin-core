@@ -17,14 +17,14 @@ export function apply(ctx: Context, config: Config)
   ctx.inject(['nazrin'], (ctx: Context) =>
   {
     ctx.command('nazrin', '聚合搜索核心！！')
-      .option('music', '-m <keyword:text> 歌曲名称')
-      .option('video', '-v <keyword:text> 长视频名称')
-      .option('short_video', '-sv <keyword:text> 短视频关键词')
-      .option('acg', '-a <keyword:text> 番剧关键词')
-      .option('film', '-f <keyword:text> 电影关键词')
-      .option('picture', '-p <keyword:text> 图片关键词')
-      .option('comics', '-c <keyword:text> 漫画关键词')
-      .option('episode', '-e <episode:text> 搜索合集')
+      .option('music', '-m <keyword:string> 歌曲名称')
+      .option('video', '-v <keyword:string> 长视频名称')
+      .option('short_video', '-sv <keyword:string> 短视频关键词')
+      .option('acg', '-a <keyword:string> 番剧关键词')
+      .option('film', '-f <keyword:string> 电影关键词')
+      .option('picture', '-p <keyword:string> 图片关键词')
+      .option('comics', '-c <keyword:string> 漫画关键词')
+      .option('episode', '-e <episode:string> 搜索合集')
       .usage(usage)
       .action(async (_) =>
       {
