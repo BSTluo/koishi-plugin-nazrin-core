@@ -240,7 +240,7 @@ export class Search
                   ? `<img src="${v}"/>`
                   : '';
 
-          this.session?.send(`nazrin解析结果：${v}`);
+          if (this.config.resultOutput) { this.session?.send(`nazrin解析结果：${v}`); }
           this.session?.send(mediaTag);
         });
       });

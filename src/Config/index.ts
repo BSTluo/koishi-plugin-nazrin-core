@@ -2,10 +2,12 @@ import { Schema } from "koishi";
 export interface Config
 {
   textOutput: boolean;
+  resultOutput: boolean;
 }
 
 export const Config: Schema<Config> = Schema.object({
-  textOutput: Schema.boolean().description('文本输出').default(false)
+  textOutput: Schema.boolean().description('搜索结果以文本输出').default(false),
+  resultOutput: Schema.boolean().description('解析结果以文本输出').default(false),
 });
 
 export const usage = `
