@@ -1,6 +1,6 @@
-export * from './core';
-export * from './service';
-export * from './config';
+export * from './Core';
+export * from './Service';
+export * from './Config';
 import * as Nazrin from './Events';
 
 declare module 'koishi' {

@@ -16,7 +16,7 @@ export const SearchType = {
   acg: "acg",
   movie: "movie",
   picture: "picture",
-  comics: "comics"
+  comics: "comics",
 } as const;
 
 export type SearchType = typeof SearchType[keyof typeof SearchType];
