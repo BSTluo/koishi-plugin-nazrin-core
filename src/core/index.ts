@@ -23,8 +23,8 @@ export function apply(ctx: Context, config: Config)
       .option('acg', '-a <keyword:text> 番剧关键词')
       .option('film', '-f <keyword:text> 电影关键词')
       .option('picture', '-p <keyword:text> 图片关键词')
-      .option('comics', '-c <keyword:string> 漫画关键词')
-      .option('episode', '-e <episode:string> 搜索合集')
+      .option('comics', '-c <keyword:text> 漫画关键词')
+      .option('episode', '-e <episode:text> 搜索合集')
       .usage(usage)
       .action(async (_) =>
       {

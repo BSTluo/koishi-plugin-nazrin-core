@@ -60,10 +60,11 @@ export class Search
     {
       type = keys[0] as SearchType;
       return type;
-    } else if (keys[0] === 'episode'){
+    } else if (keys[0] === 'episode')
+    {
       this.session?.send('你输入了一个合集搜索指令，但是没有指定搜索类型！');
       return null;
-    }else
+    } else
     {
       this._.session?.send('你未输入正确的nazrin指令参数！');
       return null;
@@ -133,10 +134,17 @@ export class Search
         overDataList = [];
         this.session?.send('输入的文本不正确');
         return -1;
+      } else
+      {
+
+        // 在这里执行 startIndex 的更新
+        startIndex = (index === "上一页") ? startIndex - itemsPerPage : (index === "下一页") ? startIndex + itemsPerPage : startIndex;
       }
 
-      // 在这里执行 startIndex 的更新
-      startIndex = (index === "上一页") ? startIndex - itemsPerPage : (index === "下一页") ? startIndex + itemsPerPage : startIndex;
+      if (/^[0-9]+$/.test(index)) {
+        break;
+      }
+
     }
 
     return Number(index) + startIndex;
