@@ -40,7 +40,7 @@ export class Search
 
       if (this._.options.episode == '') parseEpisode = 'all';
       else if (!isNaN(Number(this._.options.episode))) parseEpisode = parseInt(this._.options.episode);
-      this.ctx.emit(`nazrin/${type}`, this.ctx, this._.options.music, parseEpisode);
+      this.ctx.emit(`nazrin/episode_${type}`, this.ctx, this._.options.music, parseEpisode);
     } else
     {
       this.ctx.emit(`nazrin/${type}`, this.ctx, this._.options.music);
