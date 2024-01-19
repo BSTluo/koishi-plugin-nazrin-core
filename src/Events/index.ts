@@ -6,7 +6,7 @@ interface SearchEventFunction {
 }
 
 interface ParseEventFunction {
-    (ctx: Context, platform: string, url: string, data?: any): Promise<void>
+    (ctx: Context, platform: string, url: string, data?): Promise<void>
 }
 
 export interface Events
