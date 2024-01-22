@@ -1,4 +1,94 @@
+ # koishi-plugin-nazrin-core
 
+[![npm](https://img.shields.io/npm/v/koishi-plugin-nazrin-core?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-nazrin-core)
+
+媒体聚合搜索核心！！
+
+# 快速入门
+
+附属插件必须包含：
+
+1. 搜索资源，输入关键词后，给出关键词的搜索结果
+2. 解析资源直链
+
+```javascript
+import { Context } from'koishi'
+
+
+import { } from'koishi-plugin-nazrin-core'//添加此行
+
+export const using = ['nazrin'] // 添加此行
+
+export const name = 'netease-music-example'
+
+export function apply(ctx: Context) {
+
+  const thisPlatform = 'netease'// 定义当前扩展的平台名称，比如netease(网易云)
+
+  ctx.nazrin.music.push(thisPlatform) // 将此插件添加到nazrin的music音乐源列表
+
+  // nazrin-music: 接收音乐搜索请求
+  ctx.on('nazrin/music', (ctx, keyword) => {
+    // ctx是koishi的上下文
+    // keyword为关键词
+
+    // findList为搜索结果，当当前平台未搜索到结果需要如下格式：
+    const findList = [
+      {
+        err: true, // 是否错误
+        platform: thisPlatform // 当前平台
+      }
+    ]
+
+    // 当当前平台成功搜索到结果需要如下格式：
+    const findList = [
+      {
+        name: '作品1',
+        author: '作者1',
+        cover: '封面图片直链',
+        url: 'https://music.163.com/song?id=2048603084&userid=582785446',
+        platform: thisPlatform, // 当前平台
+        err: false, // 是否错误
+        data?: any // 传递一些缓存的值
+      },
+      {
+        name: '作品2',
+        author: '作者2',
+        cover: '封面图片直链',
+        url: 'https://music.163.com/song?id=1962946869&userid=582785446',
+        platform: thisPlatform, // 当前平台
+        err: false, // 是否错误
+        data?: any // 传递一些缓存的值
+      },
+      /* 更多.. */
+    ]
+    ctx.emit('nazrin/search_over', findList) // 完成后调用此条，提交搜索结果给用户
+  })
+
+  // nazrin/parse_music: 接收音乐直链解析请求
+  ctx.on('nazrin/parse_music', (ctx, platform, url, data?:any)=>{
+    // 接收到的url是提交的url
+
+    if (platform !== thisPlatform) { return } // 判断是否为本平台的解析请求
+    // .... 解析此链接
+
+    // 调用此条提交解析结果
+    // 带?的表示为非必填
+    ctx.emit('nazrin/parse_over',
+      '资源直链',
+      '?资源名字',
+      '?资源作者',
+      '?资源封面',
+      300, /* ?资源时长，单位s */
+      720, /* ?比特率，单位kbps */
+      '?卡片颜色')
+    })
+}
+```
+
+# 更多信息
+
+```javascript
 
 import { Context } from'koishi'
 
@@ -93,3 +183,4 @@ ctx.on('nazrin/parse_movie', async (ctx:Context, platform: string, url: string, 
 
 // platform是平台名称，url是需要解析的页面地址
 */
+```
