@@ -129,7 +129,7 @@ export class Search
     }
 
     // 只有在有下一页的情况下才进行数字和范围检查
-    if (index !== "下一页" && index !== "上一页" && (!/^[0-9]+$/.test(index) || Number(index) <= 0 || Number(index) > nowList.length))
+    if (index !== "下一页" && index !== "上一页" && (!/^[0-9]+$/.test(index) || Number(index) <= 0 || Number(index) > nowList.length) || (Number(index) < 1 || Number(index) > 10))
     {
       overDataList = [];
       this.session?.send('输入的文本不正确');
@@ -157,11 +157,12 @@ export class Search
       index = index?.trim(); // 在这里进行 trim
 
       startIndex = await this.handleUserInput(index, startIndex, overDataList, nowList);
+      const numericIndex = Number(index);
 
-      if (/^[0-9]+$/.test(index))
-      {
+      if (!isNaN(numericIndex) && numericIndex >= 1 && numericIndex <= 10) {
         break;
       }
+      startIndex = 0;
     }
 
     return Number(index) + startIndex;
@@ -179,7 +180,6 @@ export class Search
     const over = this.ctx.on('nazrin/search_over', async (data) =>
     {
       const platformIndex = whichPlatform.indexOf(data[0].platform);
-
       if (platformIndex < 0)
       {
         this.logger.warn(` [${data[0].platform}] 平台未注册`);
