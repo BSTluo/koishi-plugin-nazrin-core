@@ -10,11 +10,10 @@ interface SearchEpisodeEventFunction {
 }
 
 interface ParseEventFunction {
-    (ctx: Context, platform: string, url: string, data?): Promise<void>
+    (ctx: Context, platform: string, url: string, data?): Promise<void>;
 }
 
-export interface Events
-{
+export interface Events {
     'nazrin/music': SearchEventFunction;
     'nazrin/video': SearchEventFunction;
     'nazrin/short_video': SearchEventFunction;
@@ -33,13 +32,14 @@ export interface Events
 
     'nazrin/search_over'(data: search_data[]): void;
 
-    'nazrin/parse_music':ParseEventFunction;
-    'nazrin/parse_video':ParseEventFunction;
-    'nazrin/parse_short_video':ParseEventFunction;
-    'nazrin/parse_acg':ParseEventFunction;
-    'nazrin/parse_movie':ParseEventFunction;
-    'nazrin/parse_picture':ParseEventFunction;
-    'nazrin/parse_comics':ParseEventFunction;
+    'nazrin/parse_music': ParseEventFunction;
+    'nazrin/parse_video': ParseEventFunction;
+    'nazrin/parse_short_video': ParseEventFunction;
+    'nazrin/parse_acg': ParseEventFunction;
+    'nazrin/parse_movie': ParseEventFunction;
+    'nazrin/parse_picture': ParseEventFunction;
+    'nazrin/parse_comics': ParseEventFunction;
 
     'nazrin/parse_over'(url: string | string[], name?: string, author?: string, cover?: string, duration?: number, bitRate?: number, color?: string): void;
+    'nazrin/parse_error'(errorMsg?: string): void;
 }

@@ -3,8 +3,7 @@ import { SearchType, search_data } from "../Core/interface";
 import { Config } from "../Config";
 import { MakeImage } from "../MakeImage";
 
-export class Search
-{
+export class Search {
   private ctx: Context;
   private _: Argv<never, never, string[], Extend<Extend<Extend<Extend<Extend<Extend<Extend<Extend<object, "music", string>, "video", string>, "short_video", string>, "acg", string>, "film", string>, "picture", string>, "comics", string>, "episode", string>>;
   private session: Session<never, never, Context>;
@@ -12,15 +11,13 @@ export class Search
   logger = new Logger('Nazrin');
 
 
-  init()
-  {
+  init() {
     const type = this.processSearchType();
     if (!type) return;
     this.searchOver(type);
   }
 
-  constructor(ctx: Context, _, config: Config)
-  {
+  constructor(ctx: Context, _, config: Config) {
     this.ctx = ctx;
     this._ = _;
     this.session = this._.session;
@@ -31,8 +28,7 @@ export class Search
    * 处理不同的search方式
    * @returns 
    */
-  private processSearchType()
-  {
+  private processSearchType() {
     const type = this.parseType();
     if (this._.options.hasOwnProperty('episode'))
     {
@@ -52,8 +48,7 @@ export class Search
    * 解析type
    * @returns 
    */
-  private parseType(): SearchType | null
-  {
+  private parseType(): SearchType | null {
     const keys = Object.keys(this._.options);
     let type: SearchType | undefined;
     if (keys[0] in SearchType)
@@ -77,8 +72,7 @@ export class Search
    * @param overDataList 
    * @returns 
    */
-  private async displayList(startIndex: number, overDataList: search_data[]): Promise<search_data[]>
-  {
+  private async displayList(startIndex: number, overDataList: search_data[]): Promise<search_data[]> {
     const itemsPerPage: number = 10;
     const nowList = overDataList.slice(startIndex, startIndex + itemsPerPage);
 
@@ -100,8 +94,7 @@ export class Search
     return nowList;
   }
 
-  private async displayPageInfo(startIndex: number, overDataList: search_data[]): Promise<void>
-  {
+  private async displayPageInfo(startIndex: number, overDataList: search_data[]): Promise<void> {
     const itemsPerPage: number = 10;
     const currentPage = Math.floor(startIndex / itemsPerPage) + 1;
     const totalPages = Math.ceil(overDataList.length / itemsPerPage);
@@ -109,8 +102,7 @@ export class Search
     this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br> <p>或输入"下一页"与"上一页"进行翻页</p> <br> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
   }
 
-  private async handleUserInput(index: string, startIndex: number, overDataList: search_data[], nowList: search_data[]): Promise<number>
-  {
+  private async handleUserInput(index: string, startIndex: number, overDataList: search_data[], nowList: search_data[]): Promise<number> {
     if (!index)
     {
       overDataList = [];
@@ -143,8 +135,7 @@ export class Search
     return startIndex;
   }
 
-  private async selectList(overDataList: search_data[]): Promise<number>
-  {
+  private async selectList(overDataList: search_data[]): Promise<number> {
     let index: string;
     let startIndex: number = 0;
 
@@ -159,7 +150,8 @@ export class Search
       startIndex = await this.handleUserInput(index, startIndex, overDataList, nowList);
       const numericIndex = Number(index);
 
-      if (!isNaN(numericIndex) && numericIndex >= 1 && numericIndex <= 10) {
+      if (!isNaN(numericIndex) && numericIndex >= 1 && numericIndex <= 10)
+      {
         break;
       }
       startIndex = 0;
@@ -172,13 +164,11 @@ export class Search
 
 
 
-  private searchOver(type: SearchType)
-  {
+  private searchOver(type: SearchType) {
     this._.session?.send('搜索中...');
     const whichPlatform = this.ctx.nazrin[type].slice();
     let overDataList: search_data[] = [];
-    const over = this.ctx.on('nazrin/search_over', async (data) =>
-    {
+    const over = this.ctx.on('nazrin/search_over', async (data) => {
       const platformIndex = whichPlatform.indexOf(data[0].platform);
       if (platformIndex < 0)
       {
@@ -223,14 +213,10 @@ export class Search
       const emitEvent = `nazrin/parse_${searchType}`;
       this.ctx.emit(emitEvent as keyof Events<Context>, this.ctx, goal.platform, goal.url, goal.data);
 
-      this.ctx.once('nazrin/parse_over', (url, name = "未知作品名", author = "未知作者", cover = "未知封面图片直链", duration = 300, bitRate = 360, color = "66ccff") =>
-      {
-        over();
-
+      this.ctx.once('nazrin/parse_over', (url, name = "未知作品名", author = "未知作者", cover = "未知封面图片直链", duration = 300, bitRate = 360, color = "66ccff") => {
         const urlList = Array.isArray(url) ? url : [url];
 
-        urlList.forEach(v =>
-        {
+        urlList.forEach(v => {
           const mediaTag =
             searchType === 'music'
               ? `<audio name="${name}" url="${v}" author="${author}" cover="${cover}" duration="${duration}" bitRate="${bitRate}" color="${color}"/>`
@@ -244,6 +230,11 @@ export class Search
           this.session?.send(mediaTag);
         });
       });
+
+      this.ctx.once('nazrin/parse_error', (errorMsg: string = '解析失败') => {
+        this.session?.send(errorMsg);
+      });
+      over();
     });
   }
 

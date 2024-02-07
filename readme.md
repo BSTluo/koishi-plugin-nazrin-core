@@ -83,6 +83,10 @@ export function apply(ctx: Context) {
       720, /* ?比特率，单位kbps */
       '?卡片颜色')
     })
+
+    // 调用此条提交解析报错
+    // 带?的表示为非必填
+    ctx.emit('nazrin/parse_error', '?报错信息')
 }
 ```
 
