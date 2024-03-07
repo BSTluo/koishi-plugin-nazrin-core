@@ -98,7 +98,7 @@ export class Search {
     const currentPage = Math.floor(startIndex / itemsPerPage) + 1;
     const totalPages = Math.ceil(overDataList.length / itemsPerPage);
 
-    this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br> <p>或输入"下一页"与"上一页"进行翻页</p> <br> <p>输入"取消"取消点播</p> <br> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
+    this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br/> <p>或输入"下一页"与"上一页"进行翻页</p> <br/> <p>输入"取消"取消点播</p> <br/> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
   }
 
   private async handleUserInput(index: string, startIndex: number, overDataList: search_data[], nowList: search_data[]): Promise<number> {
