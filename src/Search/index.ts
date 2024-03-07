@@ -36,10 +36,10 @@ export class Search {
 
       if (this._.options.episode == '') parseEpisode = 'all';
       else if (!isNaN(Number(this._.options.episode))) parseEpisode = parseInt(this._.options.episode);
-      this.ctx.emit(`nazrin/episode_${type}`, this.ctx, this._.options.music, parseEpisode);
+      this.ctx.emit(`nazrin/episode_${type}`, this.ctx, this._.options[type], parseEpisode);
     } else
     {
-      this.ctx.emit(`nazrin/${type}`, this.ctx, this._.options.music);
+      this.ctx.emit(`nazrin/${type}`, this.ctx, this._.options[type]);
     }
     return type;
   }
@@ -64,7 +64,6 @@ export class Search {
       this._.session?.send('你未输入正确的nazrin指令参数！');
       return null;
     }
-
   }
 
   /**
@@ -99,7 +98,7 @@ export class Search {
     const currentPage = Math.floor(startIndex / itemsPerPage) + 1;
     const totalPages = Math.ceil(overDataList.length / itemsPerPage);
 
-    this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br> <p>或输入"下一页"与"上一页"进行翻页</p> <br> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
+    this.session.send(`<p>请输入序号来选择具体的点播目标</p> <br> <p>或输入"下一页"与"上一页"进行翻页</p> <br> <p>输入"取消"取消点播</p> <br> <p>当前页面为: ${currentPage}/${totalPages}</p>`);
   }
 
   private async handleUserInput(index: string, startIndex: number, overDataList: search_data[], nowList: search_data[]): Promise<number> {
@@ -107,7 +106,14 @@ export class Search {
     {
       overDataList = [];
       this.session?.send('输入超时。');
-      return -1;
+      return -2;
+    }
+
+    if (index == "取消")
+    {
+      overDataList = [];
+      this.session?.send('取消点播啦');
+      return -2;
     }
 
     if (index === "下一页" && startIndex + nowList.length >= overDataList.length)
@@ -138,16 +144,20 @@ export class Search {
   private async selectList(overDataList: search_data[]): Promise<number> {
     let index: string;
     let startIndex: number = 0;
+    let lastTime: number = 0;
 
     while (startIndex < overDataList.length)
     {
-      const nowList = await this.displayList(startIndex, overDataList);
+      let nowList;
+      if (lastTime >= 0) { nowList = await this.displayList(startIndex, overDataList); }
       await this.displayPageInfo(startIndex, overDataList);
 
       index = await this.session?.prompt();
       index = index?.trim(); // 在这里进行 trim
 
       startIndex = await this.handleUserInput(index, startIndex, overDataList, nowList);
+      lastTime = startIndex;
+      if (lastTime < -1) { return lastTime; }
       const numericIndex = Number(index);
 
       if (!isNaN(numericIndex) && numericIndex >= 1 && numericIndex <= 10)
@@ -159,10 +169,6 @@ export class Search {
 
     return Number(index) + startIndex;
   }
-
-
-
-
 
   private searchOver(type: SearchType) {
     this._.session?.send('搜索中...');
@@ -200,7 +206,7 @@ export class Search {
       }
       const index = await this.selectList(overDataList);
 
-      if (index == -1)
+      if (index == -2)
       {
         return over();
       }
