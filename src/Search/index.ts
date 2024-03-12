@@ -127,11 +127,11 @@ export class Search
     if (index === "下一页" && startIndex + nowList.length >= overDataList.length)
     {
       this.session.send('无下一页了！');
-      return -1;
+      return startIndex;
     } else if (index === "上一页" && startIndex - nowList.length < 0)
     {
       this.session.send('无上一页了！');
-      return -1;
+      return startIndex;
     }
 
     // 只有在有下一页的情况下才进行数字和范围检查
@@ -145,7 +145,6 @@ export class Search
       // 在这里执行 startIndex 的更新
       startIndex = (index === "上一页") ? startIndex - nowList.length : (index === "下一页") ? startIndex + nowList.length : startIndex;
     }
-
     return startIndex;
   }
 
@@ -173,7 +172,6 @@ export class Search
       {
         break;
       }
-      startIndex = 0;
     }
 
     return Number(index) + startIndex;
