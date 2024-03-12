@@ -208,7 +208,6 @@ export class Search
           return ` [${data[0].platform}] 平台搜索结果含有null`;
         }
       }
-
       if (whichPlatform.length > 0)
       {
         return;
