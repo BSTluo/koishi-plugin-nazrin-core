@@ -40,6 +40,6 @@ export interface Events {
     'nazrin/parse_picture': ParseEventFunction;
     'nazrin/parse_comics': ParseEventFunction;
 
-    'nazrin/parse_over'(url: string | string[], name?: string, author?: string, cover?: string, duration?: number, bitRate?: number, color?: string): void;
+    'nazrin/parse_over'(url: string | string[], name?: string, author?: string, cover?: string, duration?: number, bitRate?: number, color?: string, origin?:string): void;
     'nazrin/parse_error'(errorMsg?: string): void;
 }
